@@ -57,3 +57,34 @@ const drawSCLNode : Function = (context : CanvasRenderingContext2D,  i : number,
     }
     context.restore()
 }
+
+class SemiCircleLineStage {
+
+    canvas : HTMLCanvasElement = document.createElement('canvas')
+    context : CanvasRenderingContext2D
+
+    initCanvas() {
+        this.canvas.width = w
+        this.canvas.height = h
+        this.context = this.canvas.getContext('2d')
+        document.body.appendChild(this.canvas)
+    }
+
+    render() {
+        this.context.fillStyle = backColor
+
+    }
+
+    handleTap() {
+        this.canvas.onmousedown = () => {
+
+        }
+    }
+
+    static init() {
+        const stage : SemiCircleLineStage = new SemiCircleLineStage()
+        stage.initCanvas()
+        stage.render()
+        stage.handleTap()
+    }
+}
