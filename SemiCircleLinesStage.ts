@@ -22,3 +22,38 @@ const mirrorValue : Function = (scale : number, a : number, b : number) : number
 const updateValue : Function = (scale : number, dir : number, a : number, b : number) : number => {
     return mirrorValue(scale, a , b) * dir * scGap
 }
+
+const drawSemiCircle : Function = (context : CanvasRenderingContext2D, r : number, sc : number) => {
+    context.beginPath()
+    for (var i = -90; i <= -90 + 180 * sc; i++) {
+        const x : number = r * Math.cos(i * Math.PI/180)
+        const y : number = r * Math.sin(i * Math.PI/180)
+        if (i == -90) {
+            context.moveTo(x, y)
+        } else {
+            context.lineTo(x, y)
+        }
+    }
+    context.stroke()
+}
+
+const drawSCLNode : Function = (context : CanvasRenderingContext2D,  i : number, scale : number) => {
+    const gap : number = w / (nodes + 1)
+    const size : number = gap / sizeFactor
+    const sc1 : number = divideScale(scale, 0, 2)
+    const sc2 : number = divideScale(scale, 1, 2)
+    const yGap : number = size / circles
+    context.lineCap = 'round'
+    context.lineWidth = Math.min(w, h) / strokeFactor
+    context.strokeStyle = foreColor
+    context.save()
+    context.translate(gap * (i + 1), h / 2)
+    context.rotate((Math.PI / 3) * sc1)
+    for (var j = 0; j < circles;j ++) {
+        context.save()
+        context.translate(0, -size + yGap * j)
+        drawSemiCircle(context, yGap, divideScale(scale, j, circles))
+        context.restore()
+    }
+    context.restore()
+}
