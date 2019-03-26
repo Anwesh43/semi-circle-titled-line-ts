@@ -8,12 +8,14 @@ const foreColor : string = "#673AB7"
 const backColor : string = "#bdbdbd"
 const nodes : number = 5
 const circles : number = 10
+const angleDeg : number = Math.PI / 4
+const delay : number = 20
 
 const scaleFactor : Function = (scale : number) : number => Math.floor(scale / scDiv)
 const maxScale : Function = (scale : number, i : number, n : number) : number => Math.max(0, scale - i / n)
 const divideScale : Function = (scale : number, i : number, n : number) : number => {
     const mxsc : number = maxScale(scale, i, n)
-    return Math.min(1 / n, mxsc)
+    return Math.min(1 / n, mxsc) * n
 }
 const mirrorValue : Function = (scale : number, a : number, b : number) : number => {
     const k : number = scaleFactor(scale)
@@ -48,11 +50,16 @@ const drawSCLNode : Function = (context : CanvasRenderingContext2D,  i : number,
     context.strokeStyle = foreColor
     context.save()
     context.translate(gap * (i + 1), h / 2)
-    context.rotate((Math.PI / 3) * sc1)
+    context.rotate(angleDeg * sc1)
+    context.beginPath()
+    context.moveTo(0, -size)
+    context.lineTo(0, size)
+    context.stroke()
     for (var j = 0; j < circles;j ++) {
         context.save()
-        context.translate(0, -size + yGap * j)
-        drawSemiCircle(context, yGap, divideScale(scale, j, circles))
+        context.translate(0, -size + yGap + 2 * yGap * j)
+        context.scale(1 - 2 * Math.floor(j / 5), 1)
+        drawSemiCircle(context, yGap, divideScale(sc2, j, circles))
         context.restore()
     }
     context.restore()
@@ -73,6 +80,7 @@ class SemiCircleLineStage {
 
     render() {
         this.context.fillStyle = backColor
+        this.context.fillRect(0, 0, w, h)
         this.renderer.render(this.context)
     }
 
@@ -100,7 +108,8 @@ class State {
 
     update(cb : Function) {
         this.scale += updateValue(this.scale, this.dir, 1, circles)
-        if (Math.abs(this.scale = this.prevScale) > 1) {
+        console.log(this.scale)
+        if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
             this.prevScale = this.scale
@@ -124,7 +133,7 @@ class Animator {
     start(cb : Function) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(cb, 50)
+            this.interval = setInterval(cb, delay)
         }
     }
 
