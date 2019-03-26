@@ -201,3 +201,25 @@ class SemiCircleLine {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    scl : SemiCircleLine = new SemiCircleLine()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.scl.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.scl.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.scl.update(() => {
+                    cb()
+                    this.animator.stop()
+                })
+            })
+        })
+    }
+}
